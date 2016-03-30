@@ -38,7 +38,7 @@ class LaravelCartServiceProvider extends ServiceProvider
 
         $this->app->register('Gloudemans\Shoppingcart\ShoppingcartServiceProvider');
         /*
- * Register the service provider for the dependency.
+* Register the service provider for the dependency.
  */
 //        $this->app->register('LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider');
         /*
