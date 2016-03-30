@@ -17,10 +17,10 @@ class LaravelCartServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../database/migrations/' => database_path('migrations')
-        ], 'migrations');
-
+        if (!$this->app->routesAreCached()) {
+            require __DIR__ . '/routes.php';
+        }
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'courier');
     }
 
     /**
@@ -35,6 +35,19 @@ class LaravelCartServiceProvider extends ServiceProvider
             $events = $app['events'];
             return new LaravelCart($session, $events);
         });
+
+        $this->app->register('Gloudemans\Shoppingcart\ShoppingcartServiceProvider');
+        /*
+ * Register the service provider for the dependency.
+ */
+//        $this->app->register('LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider');
+        /*
+         * Create aliases for the dependency.
+         */
+//        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+//        $loader->alias('AuthorizationServer', 'LucaDegasperi\OAuth2Server\Facades\AuthorizationServerFacade');
+//        $loader->alias('ResourceServer', 'LucaDegasperi\OAuth2Server\Facades\ResourceServerFacade');
+
     }
 
 }
