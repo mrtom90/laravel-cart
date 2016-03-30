@@ -17,9 +17,11 @@ class LaravelCartServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        $this->publishes([
+            __DIR__ . '/../database/migrations/' => database_path('migrations')
+        ], 'migrations');
 
     }
-
 
     /**
      * Register the service provider.
@@ -28,10 +30,10 @@ class LaravelCartServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['ECart'] = $this->app->share(function ($app) {
+        $this->app['LaravelCart'] = $this->app->share(function ($app) {
             $session = $app['session'];
             $events = $app['events'];
-            return new ECart($session, $events);
+            return new LaravelCart($session, $events);
         });
     }
 
