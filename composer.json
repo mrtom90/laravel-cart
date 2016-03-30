@@ -1,14 +1,15 @@
 {
-    "name": "mrtom90/laravel-cart",
-    "description": "Laravel Cart",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Pham Thai Duong",
-            "email": "mrtom90@me.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {}
+  "name": "mrtom90/laravel-cart",
+  "description": "Laravel Cart",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pham Thai Duong",
+      "email": "mrtom90@me.com"
+    }
+  ],
+  "require": {
+    "illuminate/support": "*"
+  }
 }
