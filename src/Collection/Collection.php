@@ -8,8 +8,9 @@
 
 namespace Mrtom90\LaravelCart\Collection;
 
+use Illuminate\Support\Collection as IlluminateCollection;
 
-class Collection
+class Collection extends IlluminateCollection
 {
 
 }
