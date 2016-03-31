@@ -11,6 +11,7 @@ namespace Mrtom90\LaravelCart;
 use Illuminate\Contracts\Events\Dispatcher;
 use Mrtom90\LaravelCart\Collection\CartCollection;
 use Mrtom90\LaravelCart\Collection\CartRowCollection;
+use Mrtom90\LaravelCart\Collection\CartRowExtendsCollection;
 use Mrtom90\LaravelCart\Collection\CartRowOptionsCollection;
 
 class Cart
@@ -101,9 +102,14 @@ class Cart
      * @param int $qty Item qty to add to the cart
      * @param float $price Price of one item
      * @param array $options Array of additional options, such as 'size' or 'color'
+     * @param array $extends
+     * @throws Exceptions\ShoppingcartInvalidItemException
+     * @throws Exceptions\ShoppingcartInvalidPriceException
+     * @throws Exceptions\ShoppingcartInvalidQtyException
      */
-    public function add($id, $name = null, $qty = null, $price = null, array $options = [])
+    public function add($id, $name = null, $qty = null, $price = null, array $options = [], array $extends = [])
     {
+
         // If the first parameter is an array we need to call the add() function again
         if (is_array($id)) {
             // And if it's not only an array, but a multidimensional array, we need to
@@ -114,7 +120,9 @@ class Cart
 
                 foreach ($id as $item) {
                     $options = array_get($item, 'options', []);
-                    $this->addRow($item['id'], $item['name'], $item['qty'], $item['price'], $options);
+                    $extends = array_get($item, 'extends', []);
+                    $this->addRow($item['id'], $item['name'], $item['qty'], $item['price'], $options, $extends);
+
                 }
 
                 // Fire the cart.batched event
@@ -124,14 +132,15 @@ class Cart
             }
 
             $options = array_get($id, 'options', []);
+            $extends = array_get($id, 'extends', []);
 
             // Fire the cart.add event
-            $this->event->fire('cart.add', array_merge($id, ['options' => $options]));
+            $this->event->fire('cart.add', array_merge($id, ['options' => $options], ['extends' => $extends]));
 
-            $result = $this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options);
+            $result = $this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options, $extends);
 
             // Fire the cart.added event
-            $this->event->fire('cart.added', array_merge($id, ['options' => $options]));
+            $this->event->fire('cart.added', array_merge($id, ['options' => $options], ['extends' => $extends]));
 
             return $result;
         }
@@ -139,7 +148,7 @@ class Cart
         // Fire the cart.add event
         $this->event->fire('cart.add', compact('id', 'name', 'qty', 'price', 'options'));
 
-        $result = $this->addRow($id, $name, $qty, $price, $options);
+        $result = $this->addRow($id, $name, $qty, $price, $options, $extends);
 
         // Fire the cart.added event
         $this->event->fire('cart.added', compact('id', 'name', 'qty', 'price', 'options'));
@@ -320,11 +329,13 @@ class Cart
      * @param int $qty Item qty to add to the cart
      * @param float $price Price of one item
      * @param array $options Array of additional options, such as 'size' or 'color'
+     * @param array $extends
+     * @return
      * @throws Exceptions\ShoppingcartInvalidItemException
      * @throws Exceptions\ShoppingcartInvalidPriceException
      * @throws Exceptions\ShoppingcartInvalidQtyException
      */
-    protected function addRow($id, $name, $qty, $price, array $options = [])
+    protected function addRow($id, $name, $qty, $price, array $options = [], array $extends = [])
     {
         if (empty($id) || empty($name) || empty($qty) || !isset($price)) {
             throw new Exceptions\ShoppingcartInvalidItemException;
@@ -346,7 +357,7 @@ class Cart
             $row = $cart->get($rowId);
             $cart = $this->updateRow($rowId, ['qty' => $row->qty + $qty]);
         } else {
-            $cart = $this->createRow($rowId, $id, $name, $qty, $price, $options);
+            $cart = $this->createRow($rowId, $id, $name, $qty, $price, $options, $extends);
         }
 
         return $this->updateCart($cart);
@@ -426,6 +437,9 @@ class Cart
             if ($key == 'options') {
                 $options = $row->options->merge($value);
                 $row->put($key, $options);
+            } elseif ($key == 'extends') {
+                $extends = $row->extends->merge($value);
+                $row->put($key, $extends);
             } else {
                 $row->put($key, $value);
             }
@@ -449,9 +463,10 @@ class Cart
      * @param  int $qty Item qty to add to the cart
      * @param  float $price Price of one item
      * @param  array $options Array of additional options, such as 'size' or 'color'
+     * @param $extends
      * @return CartCollection
      */
-    protected function createRow($rowId, $id, $name, $qty, $price, $options)
+    protected function createRow($rowId, $id, $name, $qty, $price, $options, $extends)
     {
         $cart = $this->getContent();
 
@@ -462,6 +477,7 @@ class Cart
             'qty' => $qty,
             'price' => $price,
             'options' => new CartRowOptionsCollection($options),
+            'extends' => new CartRowExtendsCollection($extends),
             'subtotal' => $qty * $price
         ], $this->associatedModel, $this->associatedModelNamespace);
 

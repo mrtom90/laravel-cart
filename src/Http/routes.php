@@ -7,13 +7,20 @@
  */
 Route::group(['middleware' => 'web'], function () {
     Route::get('/test', function () {
-
-        Cart::add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
+        Cart::add(
+            '293ad',
+            'Product 1',
+            1,
+            9.99,
+            ['size' => 'large'],
+            ['size' => 'large']
+        );
+        return Cart::content();
         if (count(Cart::content()) > 1) {
             return view('courier::index');
 
 
         }
-        return Cart::content();
+
     });
 });
