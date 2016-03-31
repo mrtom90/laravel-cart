@@ -1,6 +1,5 @@
 <?php namespace Mrtom90\LaravelCart\Collection;
 
-use Illuminate\Support\Collection;
 
 class CartRowCollection extends Collection {
 
