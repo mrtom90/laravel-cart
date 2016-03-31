@@ -8,16 +8,22 @@
 
 namespace Mrtom90\LaravelCart\Providers;
 
-use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Mrtom90\LaravelCart\Cart;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 
 
 class LaravelCartServiceProvider extends ServiceProvider
 {
     protected $defer = false;
 
-    public function boot()
+    public function boot(DispatcherContract $events)
     {
+
+        $events->listen('cart.add', function ($id, $name, $qty, $price, $options) {
+
+        });
+
         if (!$this->app->routesAreCached()) {
             require __DIR__ . '/../Http/routes.php';
         }
@@ -31,18 +37,12 @@ class LaravelCartServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['LaravelCart'] = $this->app->share(function ($app) {
+        $this->app['cart'] = $this->app->share(function ($app) {
             $session = $app['session'];
             $events = $app['events'];
-            return new LaravelCart($session, $events);
+            return new Cart($session, $events);
         });
 
-        $this->app->register('Gloudemans\Shoppingcart\ShoppingcartServiceProvider');
-        /*
-         * Create aliases for the dependency.
-         */
-        $loader = AliasLoader::getInstance();
-        $loader->alias('Cart', 'Gloudemans\Shoppingcart\Facades\Cart');
 
     }
 
