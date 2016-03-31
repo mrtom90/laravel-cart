@@ -6,8 +6,9 @@
  * Time: 14:30
  */
 
-namespace Mrtom90\LaravelCart;
+namespace Mrtom90\LaravelCart\Providers;
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -18,9 +19,9 @@ class LaravelCartServiceProvider extends ServiceProvider
     public function boot()
     {
         if (!$this->app->routesAreCached()) {
-            require __DIR__ . '/routes.php';
+            require __DIR__ . '/../Http/routes.php';
         }
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'courier');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'courier');
     }
 
     /**
@@ -38,15 +39,10 @@ class LaravelCartServiceProvider extends ServiceProvider
 
         $this->app->register('Gloudemans\Shoppingcart\ShoppingcartServiceProvider');
         /*
-* Register the service provider for the dependency.
- */
-//        $this->app->register('LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider');
-        /*
          * Create aliases for the dependency.
          */
-//        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-//        $loader->alias('AuthorizationServer', 'LucaDegasperi\OAuth2Server\Facades\AuthorizationServerFacade');
-//        $loader->alias('ResourceServer', 'LucaDegasperi\OAuth2Server\Facades\ResourceServerFacade');
+        $loader = AliasLoader::getInstance();
+        $loader->alias('Cart', 'Gloudemans\Shoppingcart\Facades\Cart');
 
     }
 
