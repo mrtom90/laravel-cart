@@ -13,9 +13,11 @@ use Mrtom90\LaravelCart\Collection\CartCollection;
 use Mrtom90\LaravelCart\Collection\CartRowCollection;
 use Mrtom90\LaravelCart\Collection\CartRowExtendsCollection;
 use Mrtom90\LaravelCart\Collection\CartRowOptionsCollection;
+use Mrtom90\LaravelCart\Traits\MetaData;
 
 class Cart
 {
+    use MetaData;
     /**
      * Session class instance
      */
@@ -525,4 +527,7 @@ class Cart
         return is_array(head($array));
     }
 
+
 }
+
+

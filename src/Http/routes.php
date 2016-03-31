@@ -7,6 +7,17 @@
  */
 Route::group(['middleware' => 'web'], function () {
     Route::get('/test', function () {
+        $data = [
+            'full_name' => 'John Doe',
+            'address' => 'Example Street',
+            'hihi' => [
+                1, 2, 3
+            ]
+        ];
+        //return Cart::removeMetaData();
+        //return Cart::removeMetaData('shipping_information');
+        return Cart::setMetaData('shipping_information.test.full_name', $data);
+
         Cart::add(
             '293ad',
             'Product 1',
@@ -18,8 +29,6 @@ Route::group(['middleware' => 'web'], function () {
         return Cart::content();
         if (count(Cart::content()) > 1) {
             return view('courier::index');
-
-
         }
 
     });
