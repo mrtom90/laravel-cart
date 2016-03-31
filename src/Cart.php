@@ -449,6 +449,8 @@ class Cart
 
         if (!is_null(array_keys($attributes, ['qty', 'price']))) {
             $row->put('subtotal', $row->qty * $row->price);
+            $postage = (int)array_get($row->extends, 'postage');
+            $row->put('postage', $postage);
         }
 
         $cart->put($rowId, $row);
@@ -528,6 +530,21 @@ class Cart
     }
 
 
+    public function all()
+    {
+        return [
+            'content' => $this->content(),
+            'count' => [
+                'items' => $this->count(false),
+                'total' => $this->count(),
+            ],
+            'total' => [
+
+                'total' => $this->total()
+            ],
+            'metadata' => $this->getMetaData()
+        ];
+    }
 }
 
 

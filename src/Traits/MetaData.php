@@ -26,10 +26,12 @@ trait MetaData
         return $data;
     }
 
-    public function getMetaData($key)
+    public function getMetaData($key = null)
     {
         $data = $this->session->get('cart.metadata');
-
+        if ($key == null) {
+            return $data;
+        }
         return array_get($data, $key);
     }
 

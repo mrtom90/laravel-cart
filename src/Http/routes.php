@@ -16,8 +16,8 @@ Route::group(['middleware' => 'web'], function () {
         ];
         //return Cart::removeMetaData();
         //return Cart::removeMetaData('shipping_information');
-        return Cart::setMetaData('shipping_information.test.full_name', $data);
-
+        //return Cart::setMetaData('shipping_information', $data);
+        return Cart::all();
         Cart::add(
             '293ad',
             'Product 1',
